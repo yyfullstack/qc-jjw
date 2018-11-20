@@ -1,0 +1,27 @@
+{
+  "name": "qcjjw",
+  // 应用名称
+  "script": "./bin/www",
+  // 实际启动脚本
+  "cwd": "./",
+  "watch": [
+    "routes",
+    "db",
+    "models"
+  ],
+  // 当前工作路径
+  "ignore_watch": [
+    // 从监控目录中排除
+    "node_modules",
+    "logs",
+    "public",
+    "参考"
+  ],
+  "watch_options": {
+    "followSymlinks": false
+  },
+  "env": {
+    "NODE_ENV": "dev"
+    // 环境参数，当前指定为生产环境
+  }
+}

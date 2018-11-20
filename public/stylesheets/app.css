@@ -1,0 +1,71 @@
+/* 公共部分
+-------------------------------------------------- */
+.bg-honeydew {
+    background-color: #f0f0f0;
+}
+
+.border-lightgray {
+    border: 1px solid #d3d3d3;
+}
+
+/* header 部分
+-------------------------------------------------- */
+.navbar-wrapper {
+    background-color: #222;
+    margin-top: 0 !important;
+}
+
+.navbar {
+    margin-bottom: 0 !important;
+    border-width: 0 !important;
+}
+
+.navbar-nav > li > a {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.logo-img {
+    width: 180px;
+    position: relative;
+    top: -5px;
+    margin-right: 20px;
+}
+
+.phone-nav {
+    margin-right: 20px !important;
+}
+
+/* footer 部分
+-------------------------------------------------- */
+footer {
+    background: #29323d;
+    padding: 20px 0 15px;
+    margin-top: 50px;
+}
+
+footer h4 {
+    color: #fff;
+}
+
+footer p {
+    color: #8D9095;
+}
+
+.copy-right {
+    background-color: #19212d;
+    text-align: center;
+    line-height: 50px;
+    height: 50px;
+    color: #696969;
+}
+
+/* index 页面部分
+-------------------------------------------------- */
+.app-text-center {
+    text-align: center;
+}
+
+.app-mobile-img {
+    max-width: 300px;
+}

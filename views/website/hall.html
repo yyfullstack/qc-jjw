@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%=title%></title>
+    <link rel="stylesheet" href="/assets/Bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/app.css">
+    <link rel="stylesheet" href="/stylesheets/aui.css">
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+    <script src="/assets/html5shiv.min.js"></script>
+    <script src="/assets/respond.min.js"></script>
+    <![endif]-->
+    <style>
+
+
+    </style>
+</head>
+<body>
+<!--头部 导航-->
+<% include header.html %>
+
+<div class="container">
+    <div class="row" id="carList">
+
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination" id="pageList">
+
+        </ul>
+    </nav>
+</div>
+
+<!--底部-->
+<% include footer.html %>
+
+<script id="series_tpl" type="text/html">
+    <a href="javascript:void(0)" data-series="不限">不限</a>
+    {{each list}}
+    <a href="javascript:void(0)" data-series="{{$value.name}}">{{$value.name}}</a>
+    {{/each}}
+</script>
+
+<script id="cars" type="text/html">
+    {{each list}}
+    <div class="col-sm-6 col-md-3">
+        <div class="thumbnail">
+            <img src="/images/noPic.gif" alt="..." width="150px">
+            <div class="caption">
+                <h3>{{$value.name}} &nbsp;&nbsp; {{$value.start_price}}</h3>
+                <p>开始时间：{{$value.start}}</p>
+                <p>结束时间：{{$value.end}}</p>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</script>
+
+<script src="/assets/jQuery/jquery.min.js"></script>
+<script src="/assets/template-web.js"></script>
+<script src="/assets/Bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/jqPaginator/jqpaginator.min.js"></script>
+
+<script>
+
+    $(function ($) {
+        display_pages();
+    });
+
+    function display_pages(visible_pages, current_page) {
+        if (!visible_pages) {
+            visible_pages = 5;
+        }
+        if (!current_page) {
+            current_page = 1;
+        }
+        $.get('/countAuction', function (data) {
+            data = JSON.parse(data);
+            var result = data['total'];
+            if (result < 1) {
+                alert('暂无车辆信息');
+                return;
+            }
+            var pages = Math.ceil(result / 10);
+            //分页组件
+            $.jqPaginator('#pageList', {
+                totalPages: pages,
+                visiblePages: 5,
+                currentPage: 1,
+                first: '<li class="first"><a href="javascript:;">首页</a></li>',
+                prev: '<li class="prev"><a href="javascript:;">上一页</a></li>',
+                next: '<li class="next"><a href="javascript:;">下一页</a></li>',
+                last: '<li class="last"><a href="javascript:;">末页</a></li>',
+                page: '<li class="page"><a href="javascript:;">{{page}}</a></li>',
+                onPageChange: function (num, type) {
+                    paging(num);
+                }
+            });
+        });
+    }
+
+    function paging(page) {
+        $.get("/showAuction/" + page, function (data) {
+                data = JSON.parse(data);
+            console.log(data);
+                var html = template('cars', {list: data});
+                console.log(html);
+                $('#carList').html(html);
+            }
+        );
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%=title%></title>
+    <link rel="stylesheet" href="/assets/Bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/Bootstrap/css/carousel.css">
+    <link rel="stylesheet" href="/stylesheets/app.css">
+    <link rel="stylesheet" href="/stylesheets/aui.css">
+
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+    <script src="/assets/html5shiv.min.js"></script>
+    <script src="/assets/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div class="navbar-wrapper">
+    <div class="container">
+        <nav class="navbar navbar-inverse navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#top-navbar-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">
+                        <img alt="Brand" src="/images/logo.png" class="logo-img">
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="top-navbar-1">
+                    <ul class="nav navbar-nav">
+                        <li <% if(active == 'index') { %>class="active"<% } %>><a href="/">首页 <span class="sr-only">(current)</span></a></li>
+                        <li <% if(active == 'vehicle') { %>class="active"<% } %>><a href="/vehicle">全车整套配件</a></li>
+                        <li <% if(active == 'parts') { %>class="active"<% } %>><a href="/parts">自选零拆配件</a></li>
+                        <li <% if(active == 'hall') { %>class="active"<% } %>><a href="/hall">竞价大厅</a></li>
+                        <li <% if(active == 'order') { %>class="active"<% } %>><a href="/order">旧件预约</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right phone-nav">
+                        <li><a href="#"><span class="glyphicon glyphicon-phone"></span>400-1234-1234</a></li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div>
+        </nav>
+    </div>
+</div>
+
+<% if(breadcrumb) { %>
+<div class="breadcrumb-wrap">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li>
+                当前位置：
+            </li>
+            <li><a href="/">首页</a></li>
+            <li><%=title%></li>
+        </ol>
+    </div>
+</div>
+<% } %>

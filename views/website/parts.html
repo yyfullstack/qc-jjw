@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%=title%></title>
+    <link rel="stylesheet" href="/assets/Bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/app.css">
+    <link rel="stylesheet" href="/stylesheets/aui.css">
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+    <script src="/assets/html5shiv.min.js"></script>
+    <script src="/assets/respond.min.js"></script>
+    <![endif]-->
+    <style>
+
+
+    </style>
+</head>
+<body>
+<!--头部 导航-->
+<% include header.html %>
+
+<div class="container screen-list-box">
+    <div class="row">
+        <div class="col-md-12">
+            <dl>
+                <dt>已选条件：</dt>
+                <dd>
+                    <div class="aui-clear-list">
+                        <div class="aui-selected-info" id="model"><span>车型：</span><label></label><em></em>
+                        </div>
+                        <div class="aui-selected-info" id="brand"><span>品牌：</span><label></label><em></em>
+                        </div>
+                        <div class="aui-selected-info" id="series"><span>系列：</span><label></label><em></em>
+                        </div>
+                    </div>
+                    <div class="aui-eliminate" id="clearChoose">清除筛选条件</div>
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <dl>
+                <dt>车辆类型：</dt>
+                <dd class="clearfix" id="modelList">
+                    <% for(var i=0;i< models.length;i++){ %>
+                    <a href="javascript:void(0)" data-model="<%= models[i].name %>"><%= models[i].name %></a>
+                    <% } %>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <dl>
+                <dt>品牌：</dt>
+                <dd class="clearfix" id="preList">
+                    <% for(var i=0;i< keys.length;i++){ %>
+                    <a href="javascript:void(0)" data-brand-key="<%= keys[i] %>"><%= keys[i] %></a>
+                    <% } %>
+                </dd>
+                <dd class="clearfix" id="brandList">
+                    <% for(var i=0;i< brands.length;i++){ %>
+                    <ul class="brand-ul" data-key="<%= brands[i].key %>">
+                        <% for(var j=0;j< brands[i].children.length;j++){ %>
+                        <li>
+                            <a href="javascript:void(0)" data-brand="<%=brands[i].children[j].name %>"><%=brands[i].children[j].name%></a>
+                        </li>
+                        <% } %>
+                    </ul>
+                    <% } %>
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <dl style="border-bottom-width: 0">
+                <dt>系列：</dt>
+                <dd class="clearfix" id="seriesList">
+                    <a href="javascript:void(0)" data-series="不限">不限</a>
+                    <% for(var i=0;i< series.length;i++){ %>
+                    <a href="javascript:void(0)" data-series="<%= series[i].name %>"><%= series[i].name %></a>
+                    <% } %>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row" id="carList">
+
+    </div>
+    <nav aria-label="Page navigation">
+        <ul class="pagination" id="pageList">
+
+        </ul>
+    </nav>
+</div>
+
+<!--底部-->
+<% include footer.html %>
+
+<script id="series_tpl" type="text/html">
+    <a href="javascript:void(0)" data-series="不限">不限</a>
+    {{each list}}
+    <a href="javascript:void(0)" data-series="{{$value.name}}">{{$value.name}}</a>
+    {{/each}}
+</script>
+
+<script id="cars" type="text/html">
+    {{each list}}
+    <div class="col-sm-6 col-md-3">
+        <div class="thumbnail">
+            <img src="/images/noPic.gif" alt="..." width="150px">
+            <div class="caption">
+                <h3>{{$value.brand}} &nbsp;&nbsp; {{$value.series}}</h3>
+                <p>{{$value.model}} &nbsp;&nbsp; 燃油：{{$value.fuel}}</p>
+                <p>生产年份：{{$value.madeyear}} &nbsp;&nbsp;颜色：{{$value.color}}</p>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</script>
+
+<script src="/assets/jQuery/jquery.min.js"></script>
+<script src="/assets/template-web.js"></script>
+<script src="/assets/Bootstrap/js/bootstrap.min.js"></script>
+<script src="/assets/jqPaginator/jqpaginator.min.js"></script>
+
+<script>
+
+    $(function ($) {
+        $('#preList a').hover(function () {
+            var key = $(this).attr('data-brand-key');
+            $('#brandList ul').hide();
+            $('#brandList ul').filter(function () {
+                return $(this).attr('data-key') === key;
+            }).show();
+        });
+
+        $('#brandList ul').filter(':first').show();
+
+        $("#brandList").on("click", 'a', function () {
+            var brand = $(this).attr('data-brand');
+            if (brand) {
+                $.get("/getSeries/" + brand, function (data) {
+                        data = JSON.parse(data);
+                        var html = template('series_tpl', {list: data});
+                        $('#seriesList').html(html);
+                        $('#brand').find('label').text(brand);
+                        $('#brand').attr('data', brand);
+                        $('#brand').show();
+                        display_pages();
+                    }
+                );
+            }
+        });
+
+        $("#modelList").on("click", 'a', function () {
+            var model = $(this).attr('data-model');
+            if (model) {
+                $('#model').find('label').text(model);
+                $('#model').attr('data', model);
+                $('#model').show();
+                display_pages();
+            }
+        });
+
+        $("#seriesList").on("click", 'a', function () {
+            var series = $(this).attr('data-series');
+            if (series) {
+                $('#series').find('label').text(series);
+                $('#series').attr('data', series);
+                $('#series').show();
+                display_pages();
+            }
+        });
+
+        display_pages();
+    });
+
+    function display_pages(visible_pages, current_page) {
+        if (!visible_pages) {
+            visible_pages = 5;
+        }
+        if (!current_page) {
+            current_page = 1;
+        }
+        var obj = getCriteria();
+        $.get('/countCar', obj, function (data) {
+            data = JSON.parse(data);
+            var result = data['total'];
+            if (result < 1) {
+                alert('暂无车辆信息');
+                return;
+            }
+            var pages = Math.ceil(result / 10);
+            //分页组件
+            $.jqPaginator('#pageList', {
+                totalPages: pages,
+                visiblePages: 5,
+                currentPage: 1,
+                first: '<li class="first"><a href="javascript:;">首页</a></li>',
+                prev: '<li class="prev"><a href="javascript:;">上一页</a></li>',
+                next: '<li class="next"><a href="javascript:;">下一页</a></li>',
+                last: '<li class="last"><a href="javascript:;">末页</a></li>',
+                page: '<li class="page"><a href="javascript:;">{{page}}</a></li>',
+                onPageChange: function (num, type) {
+                    paging(num, obj);
+                }
+            });
+        });
+    }
+
+    function paging(page, obj) {
+        $.get("/showCar/" + page, obj, function (data) {
+                data = JSON.parse(data);
+                var html = template('cars', {list: data});
+                console.log(html);
+                $('#carList').html(html);
+            }
+        );
+    }
+
+    function getCriteria() {
+        var obj = {split: '1'};
+        $('.aui-clear-list').children(".aui-selected-info").filter(':visible').each(function () {
+            var id = $(this).attr('id');
+            var data = $(this).attr('data');
+            if (id && data) {
+                obj[id] = data;
+            }
+        });
+        return obj;
+    }
+
+    $('#clearChoose').on('click', function () {
+        $('.aui-clear-list').children(".aui-selected-info").each(function () {
+            $(this).attr('data', '');
+            $(this).hide();
+        });
+        display_pages();
+    })
+
+    $('.aui-clear-list').on('click', 'em', function () {
+        var parent = $(this).parent();
+        parent.attr('data', '');
+        parent.hide();
+        display_pages();
+    })
+
+</script>
+</body>
+</html>
